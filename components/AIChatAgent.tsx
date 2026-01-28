@@ -205,11 +205,11 @@ Guidelines:
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[60]">
+    <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-[60]">
       {/* Chat Bubble Button */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className={`group relative w-16 h-16 rounded-[1.5rem] flex items-center justify-center shadow-2xl transition-all duration-300 ${
+        className={`group relative w-14 sm:w-16 h-14 sm:h-16 rounded-[1.2rem] sm:rounded-[1.5rem] flex items-center justify-center shadow-2xl transition-all duration-300 ${
           isOpen 
             ? 'bg-slate-900 rotate-90' 
             : 'whatsapp-green hover:scale-110 active:scale-95 shadow-green-500/20'
@@ -217,13 +217,13 @@ Guidelines:
         aria-label="Open chat"
       >
         {isOpen ? (
-          <X className="text-white w-8 h-8" />
+          <X className="text-white w-6 h-6 sm:w-8 sm:h-8" />
         ) : (
           <>
-            <MessageCircle className="text-white w-8 h-8" />
-            <div className="absolute -top-14 right-0 bg-white px-5 py-3 rounded-2xl shadow-2xl text-xs font-black text-slate-800 border border-slate-100 whitespace-nowrap animate-bounce">
+            <MessageCircle className="text-white w-6 h-6 sm:w-8 sm:h-8" />
+            <div className="absolute -top-12 sm:-top-14 right-0 bg-white px-3 sm:px-5 py-2 sm:py-3 rounded-lg sm:rounded-2xl shadow-2xl text-[10px] sm:text-xs font-black text-slate-800 border border-slate-100 whitespace-nowrap animate-bounce">
               Need help? 🚀
-              <div className="absolute bottom-[-6px] right-6 w-3 h-3 bg-white rotate-45 border-b border-r border-slate-100"></div>
+              <div className="absolute bottom-[-5px] sm:bottom-[-6px] right-4 sm:right-6 w-2.5 sm:w-3 h-2.5 sm:h-3 bg-white rotate-45 border-b border-r border-slate-100"></div>
             </div>
           </>
         )}
@@ -231,34 +231,34 @@ Guidelines:
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="absolute bottom-24 right-0 w-[360px] sm:w-[400px] max-h-[550px] h-[70vh] bg-white rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden border border-slate-100 animate-in slide-in-from-bottom-6 duration-500">
+        <div className="fixed sm:absolute bottom-0 sm:bottom-24 left-0 sm:left-auto right-0 sm:right-0 w-full sm:w-[360px] md:w-[400px] max-h-[100vh] sm:max-h-[550px] h-screen sm:h-[70vh] bg-white rounded-t-2xl sm:rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden border-t-2 sm:border border-slate-100 animate-in slide-in-from-bottom-6 duration-500">
           {/* Header */}
-          <div className="whatsapp-green p-5 flex items-center justify-between">
-            <div className="flex items-center space-x-3 text-white">
-              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                <Bot className="w-6 h-6" />
+          <div className="whatsapp-green p-3 sm:p-5 flex items-center justify-between flex-shrink-0">
+            <div className="flex items-center space-x-2 sm:space-x-3 text-white min-w-0">
+              <div className="w-8 sm:w-10 h-8 sm:h-10 bg-white/20 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
+                <Bot className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
-              <div>
-                <h3 className="font-black text-base">PulseChat AI</h3>
+              <div className="min-w-0">
+                <h3 className="font-black text-sm sm:text-base truncate">PulseChat AI</h3>
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 bg-green-300 rounded-full animate-pulse"></span>
-                  <span className="text-green-50 text-[10px] font-black uppercase tracking-widest">Always Online</span>
+                  <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 bg-green-300 rounded-full animate-pulse flex-shrink-0"></span>
+                  <span className="text-green-50 text-[9px] sm:text-[10px] font-black uppercase tracking-widest truncate">Always Online</span>
                 </div>
               </div>
             </div>
             <button 
               onClick={() => setIsOpen(false)}
               aria-label="Close chat"
-              className="p-2 hover:bg-white/20 rounded-lg transition-all"
+              className="p-2 hover:bg-white/20 rounded-lg transition-all flex-shrink-0 ml-2"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
 
           {/* Messages */}
           <div 
             ref={scrollRef}
-            className="flex-grow p-5 space-y-4 overflow-y-auto bg-slate-50/50"
+            className="flex-grow p-3 sm:p-5 space-y-3 sm:space-y-4 overflow-y-auto bg-slate-50/50"
           >
             {messages.map((m, i) => (
               <div 
@@ -266,7 +266,7 @@ Guidelines:
                 className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
               >
                 <div 
-                  className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed shadow-sm font-semibold whitespace-pre-wrap ${
+                  className={`max-w-[85%] p-3 sm:p-4 rounded-lg sm:rounded-2xl text-xs sm:text-sm leading-relaxed shadow-sm font-semibold whitespace-pre-wrap ${
                     m.role === 'user' 
                       ? 'bg-green-600 text-white rounded-tr-none' 
                       : 'bg-white text-slate-800 border border-slate-100 rounded-tl-none'
@@ -278,8 +278,8 @@ Guidelines:
             ))}
             {isLoading && (
               <div className="flex justify-start animate-in fade-in slide-in-from-bottom-2 duration-300">
-                <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 rounded-tl-none flex items-center gap-3">
-                  <Loader2 className="w-4 h-4 text-green-500 animate-spin" />
+                <div className="bg-white p-3 sm:p-4 rounded-lg sm:rounded-2xl shadow-sm border border-slate-100 rounded-tl-none flex items-center gap-2 sm:gap-3">
+                  <Loader2 className="w-3 sm:w-4 h-3 sm:h-4 text-green-500 animate-spin flex-shrink-0" />
                   <span className="text-xs text-slate-500">Typing...</span>
                 </div>
               </div>
@@ -287,22 +287,22 @@ Guidelines:
           </div>
 
           {/* Input Area */}
-          <div className="p-5 bg-white border-t border-slate-100">
+          <div className="p-3 sm:p-5 bg-white border-t border-slate-100 flex-shrink-0">
             {dailyLimitReset && (
-              <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg text-center">
+              <div className="mb-2 sm:mb-3 p-2 sm:p-3 bg-red-50 border border-red-200 rounded-lg text-center">
                 <p className="text-xs font-bold text-red-800">
                   📅 Daily quota reached • Back in <span className="text-red-600 font-black">{countdown}</span>
                 </p>
               </div>
             )}
             {rateLimitReset && !dailyLimitReset && (
-              <div className="mb-3 p-3 bg-amber-50 border border-amber-200 rounded-lg text-center">
+              <div className="mb-2 sm:mb-3 p-2 sm:p-3 bg-amber-50 border border-amber-200 rounded-lg text-center">
                 <p className="text-xs font-bold text-amber-800">
                   ⏳ Agent busy • Back in <span className="text-amber-600 font-black">{countdown}</span>
                 </p>
               </div>
             )}
-            <div className="relative flex items-center gap-2">
+            <div className="relative flex items-center gap-1.5 sm:gap-2">
               <input 
                 type="text" 
                 value={input}
@@ -310,15 +310,15 @@ Guidelines:
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 placeholder={dailyLimitReset ? "Back tomorrow..." : rateLimitReset ? "Please wait..." : "How do I get started?"}
                 disabled={rateLimitReset !== null || dailyLimitReset !== null}
-                className="w-full bg-slate-100 border-none rounded-xl py-3 px-4 text-sm font-bold focus:ring-2 focus:ring-green-500 transition-all outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-grow bg-slate-100 border-none rounded-lg sm:rounded-xl py-2.5 sm:py-3 px-3 sm:px-4 text-xs sm:text-sm font-bold focus:ring-2 focus:ring-green-500 transition-all outline-none disabled:opacity-50 disabled:cursor-not-allowed"
               />
               <button 
                 onClick={handleSend}
                 disabled={!input.trim() || isLoading || rateLimitReset !== null || dailyLimitReset !== null}
-                className="p-3 bg-green-500 text-white rounded-xl hover:bg-green-600 disabled:bg-slate-200 transition-all disabled:cursor-not-allowed"
+                className="p-2.5 sm:p-3 bg-green-500 text-white rounded-lg sm:rounded-xl hover:bg-green-600 disabled:bg-slate-200 transition-all disabled:cursor-not-allowed flex-shrink-0"
                 aria-label="Send message"
               >
-                <Send size={16} />
+                <Send size={16} className="sm:w-4 sm:h-4" />
               </button>
             </div>
             
@@ -327,9 +327,9 @@ Guidelines:
               href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 text-xs font-black text-green-600 hover:text-green-700 hover:underline uppercase tracking-widest p-2 bg-green-50 rounded-lg transition-all mt-4"
+              className="flex items-center justify-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-black text-green-600 hover:text-green-700 hover:underline uppercase tracking-widest p-2 sm:p-3 bg-green-50 rounded-lg transition-all mt-2 sm:mt-4"
             >
-              <MessageCircle size={14} />
+              <MessageCircle size={12} className="sm:w-3.5 sm:h-3.5" />
               Chat on WhatsApp
             </a>
           </div>
