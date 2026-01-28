@@ -23,18 +23,20 @@ import {
   Calendar,
   Play
 } from 'lucide-react';
-import { GoogleGenAI } from '@google/genai';
+// Note: @google/genai is server-side only. Avoid importing it in client bundle.
 import AIChatAgent from './components/AIChatAgent';
 
 const App: React.FC = () => {
+  console.log("App component rendering");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const whatsappNumber = "+254702944890";
   const whatsappLink = `https://wa.me/${whatsappNumber.replace('+', '')}?text=Hello!%20I'm%20interested%20in%20PulseChat.%20Can%20we%20set%20up%20a%20call?`;
 
   return (
     <div className="min-h-screen flex flex-col selection:bg-green-100">
+      <a href="#main-content" className="sr-only">Skip to main content</a>
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-slate-100">
+      <nav role="navigation" aria-label="Main navigation" className="fixed top-0 left-0 right-0 z-50 glass border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16 items-center">
             <div className="flex items-center space-x-2">
@@ -60,7 +62,7 @@ const App: React.FC = () => {
             </div>
 
             <div className="md:hidden">
-              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-slate-600">
+              <button type="button" aria-expanded={isMenuOpen} aria-controls="mobile-menu" onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 text-slate-600">
                 {isMenuOpen ? <X /> : <Menu />}
               </button>
             </div>
@@ -69,15 +71,16 @@ const App: React.FC = () => {
 
         {/* Mobile menu */}
         {isMenuOpen && (
-          <div className="md:hidden bg-white border-b border-slate-100 p-6 space-y-4 shadow-2xl animate-in slide-in-from-top duration-300">
+          <div id="mobile-menu" role="menu" aria-hidden={!isMenuOpen} className="md:hidden bg-white border-b border-slate-100 p-6 space-y-4 shadow-2xl animate-in slide-in-from-top duration-300">
             <a href="#features" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-slate-700 font-bold hover:text-green-600">Why Us?</a>
             <a href="#how-it-works" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-slate-700 font-bold hover:text-green-600">How it Works</a>
             <a href="#generator" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-slate-700 font-bold hover:text-green-600">AI Generator</a>
             <a href="#pricing" onClick={() => setIsMenuOpen(false)} className="block px-4 py-2 text-slate-700 font-bold hover:text-green-600">Pricing</a>
-            <a 
-              href={whatsappLink} 
+            <a
+              href={whatsappLink}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="Get started on WhatsApp"
               className="w-full whatsapp-green text-white px-5 py-4 rounded-2xl font-black flex items-center justify-center gap-2"
             >
               Get Started Now
@@ -87,6 +90,7 @@ const App: React.FC = () => {
       </nav>
 
       {/* Hero Section */}
+      <main id="main-content" role="main">
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-40 overflow-hidden bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <div className="inline-flex items-center space-x-2 px-5 py-2.5 bg-green-50 text-green-700 rounded-full text-sm font-extrabold uppercase tracking-widest border border-green-100 mb-10 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-700">
@@ -100,9 +104,7 @@ const App: React.FC = () => {
           </h1>
           
           <p className="text-xl lg:text-2xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-medium mb-14 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
-            Scale your business without the manual grind. Schedule AI-powered product ads to WhatsApp groups 
-            automatically—<span className="text-slate-900 font-bold underline decoration-green-500/30 underline-offset-4">morning coffee promos at 8 AM</span>, 
-            <span className="text-slate-900 font-bold underline decoration-green-500/30 underline-offset-4"> evening deals at 6 PM</span>, all hands-free.
+            Stop wasting time on manual posts. Your AI agent sells 24/7, sending <span className="text-slate-900 font-bold underline decoration-green-500/30 underline-offset-4">perfect pitches at perfect times</span>—breakfast rush, evening chill, midnight scrollers. <span className="text-slate-900 font-bold">You sleep. It sells.</span>
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-5 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
@@ -113,11 +115,7 @@ const App: React.FC = () => {
               className="w-full sm:w-auto px-12 py-6 whatsapp-green text-white rounded-[2rem] text-2xl font-black hover:whatsapp-green-hover shadow-[0_25px_60px_-15px_rgba(37,211,102,0.6)] hover:-translate-y-1.5 active:scale-95 transition-all flex items-center justify-center gap-3"
             >
               <MessageCircle size={28} />
-              Contact on WhatsApp
-            </a>
-            <a href="#how-it-works" className="w-full sm:w-auto px-12 py-6 bg-slate-50 text-slate-900 border-2 border-slate-100 rounded-[2rem] text-2xl font-black hover:bg-slate-100 transition-all flex items-center justify-center gap-2 group">
-              See How It Works
-              <Play size={20} className="fill-slate-900 group-hover:scale-110 transition-transform" />
+              Start Your AI Agent
             </a>
           </div>
 
@@ -192,40 +190,61 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20 space-y-4">
             <h2 className="text-5xl lg:text-6xl font-black text-slate-900 tracking-tighter">See It In Action</h2>
-            <p className="text-2xl text-slate-500 font-medium max-w-2xl mx-auto">In just a few clicks, your 24/7 sales rep is ready to go. Here's a quick look.</p>
+            <p className="text-xl text-slate-500 font-medium max-w-2xl mx-auto">5 minutes to go live. 24/7 sales on autopilot. No headaches.</p>
           </div>
           
-          <div className="grid lg:grid-cols-5 gap-10">
-            <StepCard 
-              step="1" 
-              title="Add Products" 
-              desc="Quickly add products to your agent via our sleek dashboard."
-              icon={<ShoppingBag size={24} />}
-            />
-            <StepCard 
-              step="2" 
-              title="Set Schedule" 
-              desc="Set your schedule, e.g., 8 AM & 6 PM daily on autopilot."
-              icon={<Calendar size={24} />}
-            />
-            <StepCard 
-              step="3" 
-              title="Select Groups" 
-              desc="Choose exactly which WhatsApp groups to target."
-              icon={<MessageCircle size={24} />}
-            />
-            <StepCard 
-              step="4" 
-              title="Run on Autopilot" 
-              desc="Your agent sends personalized messages automatically."
-              icon={<Bot size={24} />}
-            />
-            <StepCard 
-              step="5" 
-              title="See Sales Grow" 
-              desc="Get instant sales notifications while you're away."
-              icon={<TrendingUp size={24} />}
-            />
+          <div className="relative">
+            {/* Desktop Step Connectors */}
+            <div className="hidden lg:block absolute top-20 left-0 right-0 h-1 bg-gradient-to-r from-green-200 via-green-400 to-green-200 pointer-events-none" style={{
+              width: 'calc(100% - 60px)',
+              marginLeft: '30px',
+              marginRight: '30px'
+            }}></div>
+
+            <div className="grid lg:grid-cols-5 gap-6 lg:gap-4">
+              <StepCard 
+                step="1" 
+                title="Add Products" 
+                desc="Quickly add products to your agent via our sleek dashboard."
+                icon={<ShoppingBag size={28} />}
+              />
+              <StepCard 
+                step="2" 
+                title="Set Schedule" 
+                desc="Choose when to send. 8 AM, 6 PM, midnight—or whenever."
+                icon={<Calendar size={28} />}
+              />
+              <StepCard 
+                step="3" 
+                title="Pick Groups" 
+                desc="Select exactly which WhatsApp groups to target."
+                icon={<MessageCircle size={28} />}
+              />
+              <StepCard 
+                step="4" 
+                title="Go Live" 
+                desc="Your agent starts selling 24/7 automatically."
+                icon={<Bot size={28} />}
+              />
+              <StepCard 
+                step="5" 
+                title="Watch Sales" 
+                desc="Get real-time notifications. Watch revenue grow."
+                icon={<TrendingUp size={28} />}
+              />
+            </div>
+          </div>
+
+          <div className="mt-20 text-center">
+            <a 
+              href={whatsappLink} 
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 px-10 py-5 whatsapp-green text-white rounded-full font-black text-lg hover:shadow-lg hover:shadow-green-500/30 transition-all hover:-translate-y-1 active:scale-95"
+            >
+              <Sparkles size={20} />
+              Start 5-Min Setup
+            </a>
           </div>
         </div>
       </section>
@@ -320,8 +339,9 @@ const App: React.FC = () => {
         </div>
       </section>
 
+      </main>
       {/* Footer */}
-      <footer className="bg-white py-20 border-t border-slate-100">
+      <footer role="contentinfo" className="bg-white py-20 border-t border-slate-100">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center space-x-3 mb-10">
             <div className="p-2 whatsapp-green rounded-xl shadow-md">
@@ -343,10 +363,11 @@ const App: React.FC = () => {
 
       {/* Persistent Contact Us Button */}
       <div className="fixed bottom-6 left-6 z-50 animate-in slide-in-from-left duration-500">
-        <a 
-          href={whatsappLink} 
+        <a
+          href={whatsappLink}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Chat with us on WhatsApp"
           className="flex items-center gap-3 px-6 py-4 whatsapp-green text-white rounded-full font-black text-sm lg:text-base shadow-2xl hover:scale-105 active:scale-95 transition-all group"
         >
           <div className="bg-white/20 p-2 rounded-full group-hover:rotate-12 transition-transform">
@@ -371,13 +392,29 @@ const FeatureCard: React.FC<{ icon: React.ReactNode, title: string, desc: string
 );
 
 const StepCard: React.FC<{ step: string, title: string, desc: string, icon: React.ReactNode }> = ({ step, title, desc, icon }) => (
-  <div className="relative group p-8 rounded-[2.5rem] bg-slate-50 hover:bg-white hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] transition-all duration-500 border border-transparent hover:border-green-100">
-    <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-green-600 shadow-sm mb-6 group-hover:scale-110 group-hover:bg-green-600 group-hover:text-white transition-all duration-500">
-      {icon}
+  <div className="relative group">
+    <div className="p-8 rounded-[2.5rem] bg-white hover:bg-slate-50 shadow-md hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.12)] transition-all duration-500 border-2 border-slate-100 hover:border-green-300">
+      {/* Step Badge */}
+      <div className="absolute -top-5 left-8 w-10 h-10 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-black text-lg shadow-lg">
+        {step}
+      </div>
+
+      {/* Icon */}
+      <div className="w-16 h-16 bg-gradient-to-br from-green-50 to-green-100 rounded-2xl flex items-center justify-center text-green-600 mb-6 group-hover:scale-110 group-hover:from-green-100 group-hover:to-green-200 transition-all duration-500 shadow-sm">
+        {icon}
+      </div>
+
+      {/* Title */}
+      <h4 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">{title}</h4>
+
+      {/* Description */}
+      <p className="text-base text-slate-600 leading-relaxed font-medium">{desc}</p>
+
+      {/* Hover Arrow */}
+      <div className="mt-6 flex items-center text-green-600 font-black text-sm group-hover:translate-x-2 transition-transform duration-300">
+        Next <ArrowRight size={16} className="ml-2" />
+      </div>
     </div>
-    <div className="absolute top-6 right-8 text-slate-200 text-6xl font-black select-none transition-colors group-hover:text-green-50">0{step}</div>
-    <h4 className="text-xl font-black text-slate-900 mb-3 tracking-tight">{title}</h4>
-    <p className="text-base text-slate-500 leading-relaxed font-medium">{desc}</p>
   </div>
 );
 
@@ -438,23 +475,13 @@ const AssetGenerator: React.FC<{ whatsappLink: string }> = ({ whatsappLink }) =>
     if (!formData.name) return;
     setLoading(true);
     setResult(null);
-    try {
-      // Fix: Follow @google/genai initialization and generation guidelines
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const prompt = `Generate a high-conversion WhatsApp marketing pitch for a product named "${formData.name}". 
-      Target Audience: ${formData.audience || 'General'}. 
-      Key Features: ${formData.features || 'Standard Features'}. 
-      Tone of Voice: ${formData.tone}. 
-      Include Emojis: ${formData.emoji ? 'Yes' : 'No'}. 
-      Make the pitch short, engaging, and suitable for WhatsApp group marketing. 
-      Include a clear Call to Action.`;
-
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: prompt,
-      });
-      // Fix: Access .text property directly
-      setResult(response.text || "Failed to generate kit. Please try again.");
+      try {
+      // Server-side API required for real generation. Provide a safe client-side fallback.
+      // If you add a server endpoint that calls Google GenAI, replace this with a fetch() call.
+      const fallback = `Hi! Here's a short WhatsApp pitch for ${formData.name} — ${formData.features}. Visit our onboarding via WhatsApp to get started: ${whatsappLink}`;
+      // simulate async delay
+      await new Promise(r => setTimeout(r, 600));
+      setResult(fallback);
     } catch (err) {
       console.error(err);
       setResult("Error generating kit. Please check your connection.");
