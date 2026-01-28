@@ -323,28 +323,15 @@ Guidelines:
             </div>
             
             {/* Contact Links */}
-            <div className="flex gap-2 mt-4">
-              <a 
-                href={whatsappLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 text-xs font-black text-green-600 hover:text-green-700 hover:underline uppercase tracking-widest p-2 bg-green-50 rounded-lg transition-all"
-              >
-                <MessageCircle size={14} />
-                WhatsApp
-              </a>
-              {telegramLink && (
-                <a 
-                  href={telegramLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 text-xs font-black text-blue-600 hover:text-blue-700 hover:underline uppercase tracking-widest p-2 bg-blue-50 rounded-lg transition-all"
-                >
-                  <MessageCircle size={14} />
-                  Telegram
-                </a>
-              )}
-            </div>
+            <a 
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 text-xs font-black text-green-600 hover:text-green-700 hover:underline uppercase tracking-widest p-2 bg-green-50 rounded-lg transition-all mt-4"
+            >
+              <MessageCircle size={14} />
+              Chat on WhatsApp
+            </a>
           </div>
         </div>
       )}
