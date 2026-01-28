@@ -1,0 +1,7 @@
+{
+  "name": "PulseChat - Marketing Site",
+  "description": "A high-conversion landing page for PulseChat, an AI-powered WhatsApp marketing automation tool, featuring an interactive AI sales assistant.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
