@@ -4,7 +4,7 @@ import AIChatAgent from '../AIChatAgent';
 
 describe('AIChatAgent', () => {
   it('renders the chat toggle button and opens the chat window', async () => {
-    render(<AIChatAgent whatsappLink="https://wa.me/123" />);
+    render(<AIChatAgent whatsappLink="https://wa.me/123" telegramLink="https://t.me/test" />);
 
     const toggle = screen.getByRole('button');
     expect(toggle).toBeInTheDocument();

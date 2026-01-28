@@ -31,6 +31,7 @@ const App: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const whatsappNumber = "+254702944890";
   const whatsappLink = `https://wa.me/${whatsappNumber.replace('+', '')}?text=Hello!%20I'm%20interested%20in%20PulseChat.%20Can%20we%20set%20up%20a%20call?`;
+  const telegramLink = "https://t.me/pulsechat_bot"; // Update with your actual Telegram username/bot
 
   return (
     <div className="min-h-screen flex flex-col selection:bg-green-100">
@@ -99,12 +100,12 @@ const App: React.FC = () => {
           </div>
           
           <h1 className="text-6xl lg:text-[100px] font-black text-slate-900 leading-[1] mb-10 tracking-tighter animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
-            Automate WhatsApp <br className="hidden lg:block" />
+            Automate WhatsApp & Telegram <br className="hidden lg:block" />
             Marketing <span className="text-green-600">on Autopilot</span>
           </h1>
           
           <p className="text-xl lg:text-2xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-medium mb-14 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
-            Stop wasting time on manual posts. Your AI agent sells 24/7, sending <span className="text-slate-900 font-bold underline decoration-green-500/30 underline-offset-4">perfect pitches at perfect times</span>—breakfast rush, evening chill, midnight scrollers. <span className="text-slate-900 font-bold">You sleep. It sells.</span>
+            Stop wasting time on manual posts. Your AI agent sells 24/7 on WhatsApp & Telegram, sending <span className="text-slate-900 font-bold underline decoration-green-500/30 underline-offset-4">perfect pitches at perfect times</span> to manage ads and customers. <span className="text-slate-900 font-bold">You sleep. It sells.</span>
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-5 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
@@ -136,14 +137,14 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-24 space-y-4">
             <h2 className="text-4xl lg:text-7xl font-black tracking-tighter">Why Choose PulseChat?</h2>
-            <p className="text-xl text-slate-400 font-medium max-w-2xl mx-auto">Everything you need to turn your WhatsApp groups into automated sales channels.</p>
+            <p className="text-xl text-slate-400 font-medium max-w-2xl mx-auto">Everything you need to turn your WhatsApp groups and Telegram channels into automated sales channels.</p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
             <FeatureCard 
               icon={<Clock size={28} className="text-green-400" />}
-              title="Set & Forget Automation"
-              desc="Schedule daily/weekly campaigns. No manual posting—the agent handles everything while you focus on your business."
+              title="Multi-Channel Automation"
+              desc="Schedule campaigns on WhatsApp groups & Telegram channels simultaneously. Manage all your customer conversations and ad campaigns in one place."
             />
             <FeatureCard 
               icon={<Bot size={28} className="text-green-400" />}
@@ -163,12 +164,17 @@ const App: React.FC = () => {
             <FeatureCard 
               icon={<TrendingUp size={28} className="text-green-400" />}
               title="ROI Focused"
-              desc="Turn WhatsApp groups into revenue streams and reach customers where they already are—no extra ad budget needed."
+              desc="Turn WhatsApp groups and Telegram channels into revenue streams. Reach customers where they already are—no extra ad budget needed."
             />
             <FeatureCard 
               icon={<Zap size={28} className="text-green-400" />}
               title="Scale Effortlessly"
               desc="Expand your reach to an unlimited number of groups without any extra manual effort from your side."
+            />
+            <FeatureCard 
+              icon={<MessageCircle size={28} className="text-green-400" />}
+              title="Telegram Agents Available"
+              desc="AI agents for managing Telegram channels and customer conversations. Handle ads, lead follow-ups, and customer support automatically 24/7."
             />
           </div>
           
@@ -216,8 +222,8 @@ const App: React.FC = () => {
               />
               <StepCard 
                 step="3" 
-                title="Pick Groups" 
-                desc="Select exactly which WhatsApp groups to target."
+                title="Pick Groups/Channels" 
+                desc="Select WhatsApp groups or Telegram channels to target."
                 icon={<MessageCircle size={28} />}
               />
               <StepCard 
@@ -291,7 +297,7 @@ const App: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-24 space-y-4">
             <h2 className="text-5xl lg:text-7xl font-black text-slate-900 tracking-tighter">Find the Perfect Plan</h2>
-            <p className="text-2xl text-slate-500 font-medium max-w-2xl mx-auto">Start automating your sales today with our transparent pricing.</p>
+            <p className="text-2xl text-slate-500 font-medium max-w-2xl mx-auto">Automate WhatsApp & Telegram for your business. Start today with transparent pricing.</p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-10 items-stretch">
@@ -299,7 +305,7 @@ const App: React.FC = () => {
               name="Starter"
               price="$7"
               desc="For individuals just getting started."
-              features={["5 groups automation", "2 campaigns/day", "Basic Analytics"]}
+              features={["5 WhatsApp/Telegram groups", "2 campaigns/day", "Basic Analytics", "Single channel support"]}
               whatsappLink={whatsappLink}
             />
             <PricingCard 
@@ -307,14 +313,14 @@ const App: React.FC = () => {
               price="$25"
               desc="For growing businesses needing power."
               highlight={true}
-              features={["20 groups automation", "Unlimited campaigns", "AI Content Generation", "Smart Targeting"]}
+              features={["20 WhatsApp/Telegram groups", "Unlimited campaigns", "AI Content Generation", "Multi-channel management", "Smart Targeting"]}
               whatsappLink={whatsappLink}
             />
             <PricingCard 
               name="Agency"
               price="$40"
               desc="For agencies and large-scale operators."
-              features={["Unlimited groups", "White-label options", "Full Analytics Dashboard", "Priority Support"]}
+              features={["Unlimited groups & channels", "WhatsApp + Telegram agents", "White-label options", "Full Analytics Dashboard", "Priority Support", "Customer management tools"]}
               whatsappLink={whatsappLink}
             />
           </div>
@@ -359,7 +365,7 @@ const App: React.FC = () => {
       </footer>
 
       {/* Support Agent */}
-      <AIChatAgent whatsappLink={whatsappLink} />
+      <AIChatAgent whatsappLink={whatsappLink} telegramLink={telegramLink} />
 
       {/* Persistent Contact Us Button */}
       <div className="fixed bottom-6 left-6 z-50 animate-in slide-in-from-left duration-500">

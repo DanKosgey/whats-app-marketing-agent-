@@ -7,13 +7,13 @@ interface Message {
   content: string;
 }
 
-const AIChatAgent: React.FC<{ whatsappLink: string }> = ({ whatsappLink }) => {
+const AIChatAgent: React.FC<{ whatsappLink: string; telegramLink?: string }> = ({ whatsappLink, telegramLink }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([
     { 
       role: 'assistant', 
-      content: "Hi! I'm the PulseChat assistant. 🚀\n\nI can help you automate your WhatsApp sales. Ask me anything about pricing, features, or how to get started!" 
+      content: "Hi! I'm the PulseChat assistant. 🚀\n\nI can help you automate your WhatsApp & Telegram sales. Ask me anything about pricing, features, or how to get started!" 
     }
   ]);
   const [isLoading, setIsLoading] = useState(false);
@@ -128,12 +128,13 @@ const AIChatAgent: React.FC<{ whatsappLink: string }> = ({ whatsappLink }) => {
             ],
             systemInstruction: {
               parts: [{
-                text: `You are a concise and helpful Sales Assistant for PulseChat - a WhatsApp marketing automation tool.
+                text: `You are a concise and helpful Sales Assistant for PulseChat - an AI marketing automation tool for WhatsApp & Telegram.
 
 Your role: Answer questions about PulseChat and guide users toward trying it.
 
 Key Points:
-- Automates WhatsApp marketing to groups 24/7
+- Automates WhatsApp & Telegram marketing 24/7
+- Works with groups and channels
 - AI generates perfect product pitches
 - Schedule at optimal times (8 AM, 6 PM, midnight)
 - Smart targeting & A/B testing
@@ -144,7 +145,7 @@ Guidelines:
 1. Keep responses SHORT (max 100 words)
 2. Be friendly and conversational
 3. Use emojis sparingly
-4. Always suggest WhatsApp messaging for demos
+4. Suggest reaching out on WhatsApp or Telegram for demos
 5. Never mention this is AI-powered`
               }]
             }
@@ -170,7 +171,7 @@ Guidelines:
             const resetTime = Date.now() + (24 * 60 * 60 * 1000);
             setDailyLimitReset(resetTime);
             
-            botResponse = `😅 We've hit our daily AI quota!\n\n📅 I'll be back tomorrow at this time.\n\nIn the meantime, message us on WhatsApp and our human team will help you out! 📲`;
+            botResponse = `😅 We've hit our daily AI quota!\n\n📅 I'll be back tomorrow at this time.\n\nIn the meantime, message us on WhatsApp or Telegram and our human team will help you out! 💬`;
           } 
           // Check for rate limit error (429 Too Many Requests - 60 second reset)
           else if (errorStatus === 429 || errorMessage.includes('429') || errorMessage.includes('rate limit')) {
@@ -180,16 +181,16 @@ Guidelines:
             const resetTime = Date.now() + 60000;
             setRateLimitReset(resetTime);
             
-            botResponse = `🤖 Our AI agent is temporarily busy handling lots of requests!\n\n⏳ I'll be back online in 60s.\n\nFeel free to reach out on WhatsApp for immediate help! 📲`;
+            botResponse = `🤖 Our AI agent is temporarily busy handling lots of requests!\n\n⏳ I'll be back online in 60s.\n\nFeel free to reach out on WhatsApp or Telegram for immediate help! 💬`;
           } 
           else {
             console.error('Gemini API error:', errorMessage);
-            botResponse = `Great question! For a detailed answer, let's chat on WhatsApp. Our team responds in minutes! 📲`;
+            botResponse = `Great question! For a detailed answer, let's chat on WhatsApp or Telegram. Our team responds in minutes! 💬`;
           }
         }
       } else {
         // Fallback response when API not configured
-        botResponse = `Thanks for asking about "${userMsg}"! 🎯\n\nFor personalized help, message us on WhatsApp and our team will show you everything in real-time!\n\nReady to automate? 🚀`;
+        botResponse = `Thanks for asking about "${userMsg}"! 🎯\n\nFor personalized help, message us on WhatsApp or Telegram and our team will show you everything in real-time!\n\nReady to automate? 🚀`;
       }
 
       // Simulate thinking time
@@ -321,16 +322,29 @@ Guidelines:
               </button>
             </div>
             
-            {/* WhatsApp Link */}
-            <a 
-              href={whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 text-xs font-black text-green-600 hover:text-green-700 hover:underline uppercase tracking-widest p-2 bg-green-50 rounded-lg transition-all mt-4"
-            >
-              <MessageCircle size={14} />
-              Chat on WhatsApp
-            </a>
+            {/* Contact Links */}
+            <div className="flex gap-2 mt-4">
+              <a 
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 text-xs font-black text-green-600 hover:text-green-700 hover:underline uppercase tracking-widest p-2 bg-green-50 rounded-lg transition-all"
+              >
+                <MessageCircle size={14} />
+                WhatsApp
+              </a>
+              {telegramLink && (
+                <a 
+                  href={telegramLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 flex items-center justify-center gap-2 text-xs font-black text-blue-600 hover:text-blue-700 hover:underline uppercase tracking-widest p-2 bg-blue-50 rounded-lg transition-all"
+                >
+                  <MessageCircle size={14} />
+                  Telegram
+                </a>
+              )}
+            </div>
           </div>
         </div>
       )}
