@@ -118,8 +118,8 @@ const AIChatAgent: React.FC<{ whatsappLink: string; telegramLink?: string }> = (
       // Try to use Gemini API if initialized
       if (genAIRef.current) {
         try {
-          const model = genAIRef.current.models.generateContent({
-            model: 'models/gemini-2.0-flash',
+          const result = await genAIRef.current.models.generateContent({
+            model: 'models/gemini-2.5-flash',
             contents: [
               {
                 role: 'user',
@@ -151,7 +151,6 @@ Guidelines:
             }
           });
 
-          const result = await model;
           const textContent = result.candidates?.[0]?.content?.parts?.[0];
           botResponse = typeof textContent === 'object' && 'text' in textContent 
             ? textContent.text 

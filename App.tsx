@@ -33,7 +33,7 @@ const App: React.FC = () => {
   console.log("App component rendering");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const whatsappNumber = "+254702944890";
-  const whatsappLink = `https://wa.me/${whatsappNumber.replace('+', '')}?text=Hello!%20I'm%20interested%20in%20PulseChat.%20Can%20we%20set%20up%20a%20call?`;
+  const whatsappLink = `https://wa.me/${whatsappNumber.replace('+', '')}?text=Hello!%20I'm%20interested%20in%20PulseChat`;
   const telegramLink = "https://t.me/pulsechat_bot"; // Update with your actual Telegram username/bot
 
   return (
