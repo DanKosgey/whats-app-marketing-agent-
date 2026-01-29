@@ -488,7 +488,7 @@ const PricingCard: React.FC<{ name: string, price: string, desc: string, feature
   </div>
 );
 
-// Fix: AssetGenerator now accepts whatsappLink as a prop to fix the missing name error
+// Enhanced AI-Powered Marketing Asset Generator with AI Integration
 const AssetGenerator: React.FC<{ whatsappLink: string }> = ({ whatsappLink }) => {
   const [formData, setFormData] = useState({
     name: '',
@@ -498,22 +498,109 @@ const AssetGenerator: React.FC<{ whatsappLink: string }> = ({ whatsappLink }) =>
     emoji: true
   });
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<string | null>(null);
+  const [result, setResult] = useState<{ pitch: string; seoTitle: string; hashtags: string; callout: string } | null>(null);
+  const genAIRef = useRef<any>(null);
+
+  // Initialize AI on mount
+  useEffect(() => {
+    const initAI = async () => {
+      const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+      if (apiKey && apiKey !== 'your_api_key_here' && apiKey.trim()) {
+        try {
+          const { GoogleGenAI } = await import('@google/genai');
+          genAIRef.current = new GoogleGenAI({ apiKey });
+        } catch (error) {
+          console.warn('AI not available for asset generator');
+        }
+      }
+    };
+    initAI();
+  }, []);
 
   const generateKit = async () => {
     if (!formData.name) return;
     setLoading(true);
     setResult(null);
-      try {
-      // Server-side API required for real generation. Provide a safe client-side fallback.
-      // If you add a server endpoint that calls Google GenAI, replace this with a fetch() call.
-      const fallback = `Hi! Here's a short WhatsApp pitch for ${formData.name} — ${formData.features}. Visit our onboarding via WhatsApp to get started: ${whatsappLink}`;
-      // simulate async delay
-      await new Promise(r => setTimeout(r, 600));
-      setResult(fallback);
+
+    try {
+      let generatedKit = {
+        pitch: '',
+        seoTitle: '',
+        hashtags: '',
+        callout: ''
+      };
+
+      if (genAIRef.current) {
+        // Generate WhatsApp Pitch (Short & Punchy)
+        const pitchResult = await genAIRef.current.models.generateContent({
+          model: 'models/gemini-2.5-flash',
+          contents: [{
+            role: 'user',
+            parts: [{
+              text: `Generate a WhatsApp marketing pitch for ${formData.name}. Target: ${formData.audience}. Features: ${formData.features}. Tone: ${formData.tone}. ${formData.emoji ? 'Use emojis.' : 'No emojis.'} Keep it under 100 words, punchy, and include a CTA. Format: Just the pitch, ready to copy-paste to WhatsApp.`
+            }]
+          }]
+        });
+        generatedKit.pitch = pitchResult.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+        // Generate SEO Title
+        const titleResult = await genAIRef.current.models.generateContent({
+          model: 'models/gemini-2.5-flash',
+          contents: [{
+            role: 'user',
+            parts: [{
+              text: `Create a catchy, SEO-friendly product title for "${formData.name}" for ${formData.audience}. Max 60 chars. Include key benefit. Just the title, no explanation.`
+            }]
+          }]
+        });
+        generatedKit.seoTitle = titleResult.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || formData.name;
+
+        // Generate Hashtags
+        const hashtagResult = await genAIRef.current.models.generateContent({
+          model: 'models/gemini-2.5-flash',
+          contents: [{
+            role: 'user',
+            parts: [{
+              text: `Generate 5 viral hashtags for promoting "${formData.name}" to ${formData.audience} on WhatsApp/Telegram. Format: #hashtag #hashtag2 etc. Separated by spaces. Just the hashtags, nothing else.`
+            }]
+          }]
+        });
+        generatedKit.hashtags = hashtagResult.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '#marketing #sales #automation';
+
+        // Generate Value Callout
+        const calloutResult = await genAIRef.current.models.generateContent({
+          model: 'models/gemini-2.5-flash',
+          contents: [{
+            role: 'user',
+            parts: [{
+              text: `Create a bold, one-liner value proposition for "${formData.name}". Highlight the main benefit for ${formData.audience}. Format: "Problem → Solution" style. Max 50 words. Just the callout.`
+            }]
+          }]
+        });
+        generatedKit.callout = calloutResult.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || `${formData.name}: Your solution to better ${formData.audience} engagement`;
+
+      } else {
+        // Smart Fallback Generation (when AI not available)
+        const emojiPrefix = formData.emoji ? ['🎯', '✨', '🚀', '💎', '⭐', '🔥'][Math.floor(Math.random() * 6)] : '';
+        
+        generatedKit.pitch = `${emojiPrefix} Introducing ${formData.name}!\n\n${formData.features}\n\nPerfect for: ${formData.audience}\n\nReady to transform your business? Tap the link below to get started!\n\n${formData.emoji ? '✅ Limited time offer - Act now!' : 'Get started today!'}`;
+        
+        generatedKit.seoTitle = `${formData.name} - Premium Solution for ${formData.audience}`;
+        generatedKit.hashtags = '#marketing #sales #automation #whatsapp #telegram';
+        generatedKit.callout = `${formData.name}: Designed specifically for ${formData.audience}. ${formData.features}`;
+      }
+
+      // Simulate network delay for better UX
+      await new Promise(r => setTimeout(r, 800));
+      setResult(generatedKit);
     } catch (err) {
       console.error(err);
-      setResult("Error generating kit. Please check your connection.");
+      setResult({
+        pitch: `Error generating content. Please try again.`,
+        seoTitle: 'Error',
+        hashtags: '#error',
+        callout: 'Please refresh and try again'
+      });
     } finally {
       setLoading(false);
     }
@@ -521,6 +608,7 @@ const AssetGenerator: React.FC<{ whatsappLink: string }> = ({ whatsappLink }) =>
 
   return (
     <div className="space-y-8 sm:space-y-10">
+      {/* Input Form */}
       <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
         <div className="space-y-2 text-left">
           <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Product Name</label>
@@ -536,7 +624,7 @@ const AssetGenerator: React.FC<{ whatsappLink: string }> = ({ whatsappLink }) =>
           <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Target Audience</label>
           <input 
             type="text" 
-            placeholder="e.g., Professionals, Students"
+            placeholder="e.g., Busy Professionals, Coffee Enthusiasts"
             className="w-full bg-slate-50 border-2 border-transparent rounded-2xl sm:rounded-3xl py-4 sm:py-5 px-5 sm:px-7 text-base sm:text-lg font-bold focus:bg-white focus:border-green-500 focus:ring-4 focus:ring-green-50/50 transition-all outline-none shadow-sm"
             value={formData.audience}
             onChange={e => setFormData({...formData, audience: e.target.value})}
@@ -544,10 +632,9 @@ const AssetGenerator: React.FC<{ whatsappLink: string }> = ({ whatsappLink }) =>
         </div>
         <div className="sm:col-span-2 space-y-2 text-left">
           <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Key Promotion / Features</label>
-          <input 
-            type="text" 
-            placeholder="e.g., 20% off for first-time buyers, ethically sourced"
-            className="w-full bg-slate-50 border-2 border-transparent rounded-2xl sm:rounded-3xl py-4 sm:py-5 px-5 sm:px-7 text-base sm:text-lg font-bold focus:bg-white focus:border-green-500 focus:ring-4 focus:ring-green-50/50 transition-all outline-none shadow-sm"
+          <textarea 
+            placeholder="e.g., 20% off for first-time buyers, ethically sourced, free shipping on orders over $50"
+            className="w-full bg-slate-50 border-2 border-transparent rounded-2xl sm:rounded-3xl py-4 sm:py-5 px-5 sm:px-7 text-base sm:text-lg font-bold focus:bg-white focus:border-green-500 focus:ring-4 focus:ring-green-50/50 transition-all outline-none shadow-sm resize-none h-24"
             value={formData.features}
             onChange={e => setFormData({...formData, features: e.target.value})}
           />
@@ -555,7 +642,7 @@ const AssetGenerator: React.FC<{ whatsappLink: string }> = ({ whatsappLink }) =>
         <div className="space-y-2 text-left">
           <label className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Brand Tone</label>
           <select 
-            className="w-full bg-slate-50 border-2 border-transparent rounded-2xl sm:rounded-3xl py-4 sm:py-5 px-5 sm:px-7 text-base sm:text-lg font-bold focus:bg-white focus:border-green-500 focus:ring-4 focus:ring-green-50/50 transition-all outline-none shadow-sm appearance-none"
+            className="w-full bg-slate-50 border-2 border-transparent rounded-2xl sm:rounded-3xl py-4 sm:py-5 px-5 sm:px-7 text-base sm:text-lg font-bold focus:bg-white focus:border-green-500 focus:ring-4 focus:ring-green-50/50 transition-all outline-none shadow-sm appearance-none cursor-pointer"
             value={formData.tone}
             onChange={e => setFormData({...formData, tone: e.target.value})}
           >
@@ -563,44 +650,119 @@ const AssetGenerator: React.FC<{ whatsappLink: string }> = ({ whatsappLink }) =>
             <option>Professional</option>
             <option>Excited</option>
             <option>Urgent</option>
+            <option>Luxury</option>
+            <option>Casual</option>
           </select>
         </div>
-        <div className="flex items-center justify-between p-5 sm:p-6 bg-slate-50 rounded-2xl sm:rounded-3xl border-2 border-transparent shadow-sm">
-          <label className="text-sm sm:text-base font-bold text-slate-700">Include Emojis?</label>
+        <div className="flex items-center justify-between p-5 sm:p-6 bg-slate-50 rounded-2xl sm:rounded-3xl border-2 border-transparent shadow-sm hover:bg-slate-100 transition-all cursor-pointer">
+          <label className="text-sm sm:text-base font-bold text-slate-700 cursor-pointer">Include Emojis?</label>
           <button 
             onClick={() => setFormData({...formData, emoji: !formData.emoji})}
-            className={`w-14 h-7 rounded-full transition-all duration-300 relative ${formData.emoji ? 'bg-green-500' : 'bg-slate-300'}`}
+            className={`w-14 h-7 rounded-full transition-all duration-300 relative flex-shrink-0 ${formData.emoji ? 'bg-green-500' : 'bg-slate-300'}`}
           >
             <div className={`absolute top-1 w-5 h-5 bg-white rounded-full transition-all shadow-md ${formData.emoji ? 'right-1' : 'left-1'}`}></div>
           </button>
         </div>
       </div>
       
+      {/* Generate Button */}
       <button 
         onClick={generateKit}
-        disabled={loading || !formData.name}
-        className="w-full py-5 sm:py-6 whatsapp-green text-white rounded-xl sm:rounded-2xl lg:rounded-[2rem] text-lg sm:text-2xl font-black hover:whatsapp-green-hover transition-all flex items-center justify-center gap-3 sm:gap-4 shadow-xl shadow-green-200 disabled:bg-slate-200 disabled:shadow-none hover:-translate-y-1 active:scale-[0.98]"
+        disabled={loading || !formData.name || !formData.audience}
+        className="w-full py-5 sm:py-6 whatsapp-green text-white rounded-xl sm:rounded-2xl lg:rounded-[2rem] text-lg sm:text-2xl font-black hover:whatsapp-green-hover disabled:bg-slate-200 disabled:shadow-none transition-all flex items-center justify-center gap-3 sm:gap-4 shadow-xl shadow-green-200 hover:-translate-y-1 active:scale-[0.98]"
       >
-        {loading ? <Loader2 className="animate-spin" size={24} /> : <Sparkles size={24} className="sm:w-7 sm:h-7" />}
-        Generate Marketing Kit
+        {loading ? (
+          <>
+            <Loader2 className="animate-spin" size={24} />
+            Generating Your Kit...
+          </>
+        ) : (
+          <>
+            <Sparkles size={24} className="sm:w-7 sm:h-7" />
+            Generate Marketing Kit
+          </>
+        )}
       </button>
 
+      {/* Results Display */}
       {result && (
-        <div className="animate-in fade-in slide-in-from-top-6 duration-700 text-left">
-          <div className="bg-green-50 p-6 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[3rem] border-4 border-green-100 relative group shadow-inner">
-            <h4 className="text-xs font-black text-green-700 uppercase tracking-[0.3em] mb-4 sm:mb-6">Your High-Conversion Pitch:</h4>
-            <p className="text-base sm:text-lg lg:text-xl text-slate-800 font-bold leading-relaxed whitespace-pre-wrap">{result}</p>
+        <div className="space-y-4 sm:space-y-6 animate-in fade-in slide-in-from-top-6 duration-700">
+          {/* WhatsApp Pitch */}
+          <div className="bg-green-50 p-6 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[3rem] border-4 border-green-100 shadow-inner">
+            <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+              <MessageCircle className="w-6 h-6 sm:w-8 sm:h-8 text-green-600 flex-shrink-0" />
+              <h4 className="text-sm sm:text-base font-black text-green-700 uppercase tracking-[0.2em]">WhatsApp Pitch</h4>
+            </div>
+            <p className="text-base sm:text-lg lg:text-xl text-slate-800 font-bold leading-relaxed whitespace-pre-wrap mb-6 sm:mb-8">{result.pitch}</p>
             <button 
               onClick={() => {
-                navigator.clipboard.writeText(result);
-                alert('Copied to clipboard! Redirecting to WhatsApp...');
-                // Fix: Line 537 - whatsappLink is now available via props
-                window.open(whatsappLink, '_blank');
+                navigator.clipboard.writeText(result.pitch);
+                alert('✅ Pitch copied! Now ready to paste on WhatsApp.');
               }}
-              className="mt-6 sm:mt-10 px-6 sm:px-8 py-3 sm:py-4 bg-white text-green-600 rounded-lg sm:rounded-2xl text-xs sm:text-sm font-black flex items-center gap-2 sm:gap-3 transition-all hover:bg-green-600 hover:text-white shadow-sm hover:shadow-lg active:scale-95"
+              className="px-6 sm:px-8 py-2 sm:py-3 bg-white text-green-600 rounded-lg sm:rounded-2xl text-xs sm:text-sm font-black flex items-center gap-2 sm:gap-3 transition-all hover:bg-green-600 hover:text-white shadow-sm hover:shadow-lg active:scale-95"
             >
-              <Send size={16} className="sm:w-4.5 sm:h-4.5" /> COPY & GO TO WHATSAPP
+              <Send size={16} className="sm:w-4 sm:h-4" /> COPY PITCH
             </button>
+          </div>
+
+          {/* SEO Title */}
+          <div className="bg-blue-50 p-6 sm:p-8 rounded-2xl sm:rounded-3xl border-4 border-blue-100 shadow-sm">
+            <h4 className="text-xs sm:text-sm font-black text-blue-700 uppercase tracking-[0.2em] mb-3 sm:mb-4">SEO Product Title</h4>
+            <p className="text-lg sm:text-2xl text-slate-800 font-black mb-4 sm:mb-6">{result.seoTitle}</p>
+            <button 
+              onClick={() => {
+                navigator.clipboard.writeText(result.seoTitle);
+                alert('✅ Title copied!');
+              }}
+              className="px-5 sm:px-6 py-2 sm:py-2.5 bg-white text-blue-600 rounded-lg text-xs sm:text-sm font-black flex items-center gap-2 transition-all hover:bg-blue-600 hover:text-white active:scale-95"
+            >
+              <Send size={14} className="sm:w-4 sm:h-4" /> COPY
+            </button>
+          </div>
+
+          {/* Value Callout */}
+          <div className="bg-purple-50 p-6 sm:p-8 rounded-2xl sm:rounded-3xl border-4 border-purple-100 shadow-sm">
+            <h4 className="text-xs sm:text-sm font-black text-purple-700 uppercase tracking-[0.2em] mb-3 sm:mb-4">💡 Value Proposition</h4>
+            <p className="text-base sm:text-lg text-slate-800 font-bold leading-relaxed mb-4 sm:mb-6">{result.callout}</p>
+            <button 
+              onClick={() => {
+                navigator.clipboard.writeText(result.callout);
+                alert('✅ Callout copied!');
+              }}
+              className="px-5 sm:px-6 py-2 sm:py-2.5 bg-white text-purple-600 rounded-lg text-xs sm:text-sm font-black flex items-center gap-2 transition-all hover:bg-purple-600 hover:text-white active:scale-95"
+            >
+              <Send size={14} className="sm:w-4 sm:h-4" /> COPY
+            </button>
+          </div>
+
+          {/* Hashtags */}
+          <div className="bg-amber-50 p-6 sm:p-8 rounded-2xl sm:rounded-3xl border-4 border-amber-100 shadow-sm">
+            <h4 className="text-xs sm:text-sm font-black text-amber-700 uppercase tracking-[0.2em] mb-3 sm:mb-4">#️⃣ Trending Hashtags</h4>
+            <p className="text-base sm:text-lg text-slate-800 font-bold mb-4 sm:mb-6 break-words">{result.hashtags}</p>
+            <button 
+              onClick={() => {
+                navigator.clipboard.writeText(result.hashtags);
+                alert('✅ Hashtags copied!');
+              }}
+              className="px-5 sm:px-6 py-2 sm:py-2.5 bg-white text-amber-600 rounded-lg text-xs sm:text-sm font-black flex items-center gap-2 transition-all hover:bg-amber-600 hover:text-white active:scale-95"
+            >
+              <Send size={14} className="sm:w-4 sm:h-4" /> COPY
+            </button>
+          </div>
+
+          {/* Full Kit Download */}
+          <div className="bg-gradient-to-br from-green-100 to-emerald-100 p-6 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl lg:rounded-[3rem] border-2 border-green-200 shadow-lg">
+            <h4 className="text-lg sm:text-2xl font-black text-green-900 mb-4 sm:mb-6">Ready to Launch?</h4>
+            <p className="text-sm sm:text-base text-green-800 font-bold mb-6 sm:mb-8">Take your complete marketing kit to WhatsApp and start selling 24/7 with PulseChat AI!</p>
+            <a 
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 sm:gap-4 px-8 sm:px-12 py-4 sm:py-6 whatsapp-green text-white rounded-xl sm:rounded-2xl lg:rounded-[2rem] text-base sm:text-lg lg:text-xl font-black hover:shadow-lg hover:shadow-green-500/30 transition-all hover:-translate-y-1 active:scale-95"
+            >
+              <MessageCircle size={22} className="sm:w-6 sm:h-6" />
+              Use This Kit on WhatsApp
+            </a>
           </div>
         </div>
       )}
